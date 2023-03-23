@@ -11,6 +11,7 @@ function transform(ContactsInput contactsInput) returns ContactsOutput => {
         }
 };
 
+
 type Attributes record {
     string 'type;
     string url;
@@ -57,4 +58,13 @@ service / on new http:Listener(9090) {
         }
         return "Hello, " + name;
     }
+
+    # A resource for transforming contacts
+    # + contactsInput - the input contacts
+    # + return - transformed contacts or error
+    resource function post contacts(@http:Payload ContactsInput contactsInput) returns ContactsOutput|error? {
+            ContactsOutput contactsOutput = transform(contactsInput);
+            return contactsOutput;
+        }
+
 }
