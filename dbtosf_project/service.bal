@@ -1,5 +1,48 @@
 import ballerina/http;
 
+function transform(ContactsInput contactsInput) returns ContactsOutput => {
+    numberOfContacts: contactsInput.totalSize,
+    contacts: from var recordsItem in contactsInput.records
+        select {
+            fullName: recordsItem.FirstName + recordsItem.LastName,
+            phoneNumber: recordsItem.Phone,
+            email: recordsItem.Email,
+            id: recordsItem.Id
+        }
+};
+
+type Attributes record {
+    string 'type;
+    string url;
+};
+
+type ContactsItem record {
+    string fullName;
+    string phoneNumber;
+    string email;
+    string id;
+};
+
+type ContactsOutput record {
+    int numberOfContacts;
+    ContactsItem[] contacts;
+};
+
+type RecordsItem record {
+    Attributes attributes;
+    string Id;
+    string FirstName;
+    string LastName;
+    string Email;
+    string Phone;
+};
+
+type ContactsInput record {
+    int totalSize;
+    boolean done;
+    RecordsItem[] records;
+};
+
 # A service representing a network-accessible API
 # bound to port `9090`.
 service / on new http:Listener(9090) {
